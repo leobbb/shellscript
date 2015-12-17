@@ -120,6 +120,24 @@ function DeleteSvn_KK()
 
 #******* Create Project in Android 5.0/5.1 *******#
 
+# Usage:  deleteSvn directory 
+function deleteSvn()
+{
+  if [ ! "" == "$1" ] 
+  then 
+    if [ -d $1 ] ; then
+      cd $1
+      find . -type d -name ".svn"|xargs rm -rf
+      echo "  Delete .svn under $1"
+      cd -
+    else
+      echo "  $1 is not a directory."
+    fi
+  else 
+    echo "  No svn directory to be deleted."
+  fi
+}
+
 # copy pl module
 function clone_preloader() 
 {
@@ -129,7 +147,8 @@ function clone_preloader()
     if [ ! -d ${NEWPROJECT} ];then
         cp -a ${OLDPROJECT} ${NEWPROJECT}
         echo "bootable/bootloader/preloader/custom/${NEWPROJECT} is created "
-       
+        deleteSvn $PWD/${NEWPROJECT}
+ 
         mv ${NEWPROJECT}/${OLDPROJECT}.mk  ${NEWPROJECT}/${NEWPROJECT}.mk
         sed -i s/${OLDPROJECT}/${NEWPROJECT}/g  ${NEWPROJECT}/${NEWPROJECT}.mk
         echo "bootable/bootloader/preloader/custom/${NEWPROJECT}/${NEWPROJECT}.mk is modified "
@@ -148,6 +167,8 @@ function clone_lk()
     if [ ! -d "target/${NEWPROJECT}" ];then     
         cp -a target/${OLDPROJECT}  target/${NEWPROJECT}
         echo "bootable/bootloader/lk/target/"${NEWPROJECT}"  is created"
+        deleteSvn $PWD/target/${NEWPROJECT}
+
         cp project/${OLDPROJECT}.mk  project/${NEWPROJECT}.mk      
         sed -i s/${OLDPROJECT}/${NEWPROJECT}/g  target/${NEWPROJECT}/include/target/cust_usb.h
         sed -i s/${OLDPROJECT}/${NEWPROJECT}/g  project/${NEWPROJECT}.mk
@@ -160,6 +181,8 @@ function clone_lk()
        if [ ! -d "dev/logo/full_${NEWPROJECT}" ];then 
            cp -a  dev/logo/full_${OLDPROJECT}  dev/logo/full_${NEWPROJECT}
            echo "bootable/bootloader/lk/dev/logo/full_${NEWPROJECT} is created"
+           deleteSvn $PWD/dev/logo/full_${NEWPROJECT}
+
        else
           echo "bootable/bootloader/lk/dev/logo/full_${NEWPROJECT} already exists !"
        fi
@@ -174,25 +197,29 @@ function clone_kernel()
   if [ "$Platform" = "mt8735" -o "$Platform" = "mt6735" -o "$Platform" = "mt6580" -o "$Platform" = "mt8321" ];then
   
     if [ "$Platform" = "mt8735" -o "$Platform" = "mt6735" ];then
-	cd kernel-3.10/arch/arm64/
+	  cd kernel-3.10/arch/arm64/
+      ARM=kernel-3.10/arch/arm64
     else	
-        cd kernel-3.10/arch/arm/
-    fi	   
+      cd kernel-3.10/arch/arm/
+      ARM=kernel-3.10/arch/arm
+    fi
+	   
 	cp boot/dts/${OLDPROJECT}.dts  boot/dts/${NEWPROJECT}.dts
-        echo "kernel-3.10/arch/arm/boot/dts/${NEWPROJECT}.dts is created"
-        cp configs/${OLDPROJECT}_defconfig  configs/${NEWPROJECT}_defconfig
+    echo "$ARM/boot/dts/${NEWPROJECT}.dts is created"
+    cp configs/${OLDPROJECT}_defconfig  configs/${NEWPROJECT}_defconfig
 	cp configs/${OLDPROJECT}_debug_defconfig  configs/${NEWPROJECT}_debug_defconfig
 	sed -i s/${OLDPROJECT}/${NEWPROJECT}/g  configs/${NEWPROJECT}_defconfig
 	sed -i s/${OLDPROJECT}/${NEWPROJECT}/g  configs/${NEWPROJECT}_debug_defconfig
-        echo "kernel-3.10/arch/arm/configs/${NEWPROJECT}_defconfig is modified"
-        echo "kernel-3.10/arch/arm/configs/${NEWPROJECT}_debug_defconfig is modified"	
-        cd $ALPS_PATH
+    echo "$ARM/configs/${NEWPROJECT}_defconfig is modified"
+    echo "$ARM/configs/${NEWPROJECT}_debug_defconfig is modified"	
+    cd $ALPS_PATH
     
     cd kernel-3.10/drivers/misc/mediatek/mach/
     
     if [ ! -d "${Platform}/${NEWPROJECT}" ];then
         cp -a ${Platform}/${OLDPROJECT}  ${Platform}/${NEWPROJECT}
         echo "kernel-3.10/drivers/misc/mediatek/mach/${Platform}/${NEWPROJECT} is created" 
+        deleteSvn $PWD/${Platform}/${NEWPROJECT}
     else
         echo "kernel-3.10/drivers/misc/mediatek/mach/${Platform}/${NEWPROJECT} already exists!" 
     fi  
@@ -205,6 +232,8 @@ function clone_kernel()
     if [ ! -d "mach-${Platform}/${NEWPROJECT}" ];then
         cp -a  mach-${Platform}/${OLDPROJECT}  mach-${Platform}/${NEWPROJECT}
         echo "kernel-3.10/arch/arm/mach-${Platform}/${NEWPROJECT} is created"
+        deleteSvn $PWD/mach-${Platform}/${NEWPROJECT}
+
         cp configs/${OLDPROJECT}_defconfig  configs/${NEWPROJECT}_defconfig
         cp configs/${OLDPROJECT}_debug_defconfig  configs/${NEWPROJECT}_debug_defconfig
         sed -i s/${OLDPROJECT}/${NEWPROJECT}/g  configs/${NEWPROJECT}_defconfig
@@ -225,24 +254,25 @@ function clone_android()
     if [ ! -d "device/sansen/${NEWPROJECT}" ];then
         cp -a device/sansen/${OLDPROJECT}  device/sansen/${NEWPROJECT}
         echo "device/sansen/${NEWPROJECT} is created"
-        mv device/sansen/${NEWPROJECT}/full_${OLDPROJECT}.mk  device/sansen/${NEWPROJECT}/full_${NEWPROJECT}.mk
+        deleteSvn $PWD/device/sansen/${NEWPROJECT}
 
+        mv device/sansen/${NEWPROJECT}/full_${OLDPROJECT}.mk  device/sansen/${NEWPROJECT}/full_${NEWPROJECT}.mk
+        sed -i s/${OLDPROJECT}/${NEWPROJECT}/g  device/sansen/${NEWPROJECT}/full_${NEWPROJECT}.mk
+        echo "device/sansen/${NEWPROJECT}/full_${NEWPROJECT}.mk is modified"
        #sed -i s/${OLDPROJECT}/${NEWPROJECT}/g  device/sansen/${NEWPROJECT}/AndroidBoard.mk
         sed -i s/${OLDPROJECT}/${NEWPROJECT}/g  device/sansen/${NEWPROJECT}/AndroidProducts.mk
         sed -i s/${OLDPROJECT}/${NEWPROJECT}/g  device/sansen/${NEWPROJECT}/BoardConfig.mk
         sed -i s/${OLDPROJECT}/${NEWPROJECT}/g  device/sansen/${NEWPROJECT}/device.mk
-        sed -i s/${OLDPROJECT}/${NEWPROJECT}/g  device/sansen/${NEWPROJECT}/full_${NEWPROJECT}.mk
         sed -i s/${OLDPROJECT}/${NEWPROJECT}/g  device/sansen/${NEWPROJECT}/vendorsetup.sh
-        echo "device/sansen/${NEWPROJECT}/full_${NEWPROJECT}.mk is modified"
     else
-        echo "device/sansen/${NEWPROJECT} already exists !"
+        echo "device/sansen/${NEWPROJECT} already exists!"
     fi
 
     if [ ! -d "vendor/mediatek/proprietary/custom/${NEWPROJECT}" ];then
         cp -a vendor/mediatek/proprietary/custom/${OLDPROJECT}  vendor/mediatek/proprietary/custom/${NEWPROJECT}
-
         # sed -i s/${BASE_PROJECT}/${NEW_PROJECT}/g  vendor/mediatek/proprietary/custom/${NEW_PROJECT}/Android.mk
         echo "vendor/mediatek/proprietary/custom/${NEWPROJECT} is created"
+        deleteSvn $PWD/vendor/mediatek/proprietary/custom/${NEWPROJECT}
     else
         echo "vendor/mediatek/proprietary/custom/${NEWPROJECT}  already exists!"
     fi
@@ -253,8 +283,8 @@ function clone_android()
     # cp -r vendor/${COMPANY}/libs/${BASE_PROJECT} vendor/${COMPANY}/libs/${NEW_PROJECT}
     cd vendor/sansen/libs/
     ln -sf  ${OLDPROJECT} ${NEWPROJECT}
-    cd $ALPS_PATH
     echo "vendor/sansen/libs/$NEWPROJECT is created"
+    cd $ALPS_PATH
     
     if [ "$Platform" = "mt6735" -o "$Platform" = "mt6580" ];then
        cd vendor/mediatek/proprietary/trustzone/project/
@@ -350,7 +380,7 @@ function main()
          ;;
          5)
          CopyProject_L
-         DeleteSvn_L
+         #DeleteSvn_L
          ;;
    esac
 }
@@ -359,6 +389,6 @@ main
 
 else
 echo "Please input two parameters as follows!"
-echo "./NewPrj_All.sh  Old_Project  New_Project"
+echo "$0 Old_Project  New_Project"
 fi
 
