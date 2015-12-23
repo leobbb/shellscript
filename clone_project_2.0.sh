@@ -96,18 +96,18 @@ function DeleteSvn_KK()
   cd mediatek/config/$NEWPROJECT
   find . -type d -name ".svn"|xargs rm -rf
   echo "Delete .svn under mediatek/config/$NEWPROJECT"
-  cd -
+  cd - > /dev/null
   
   cd mediatek/custom/$NEWPROJECT
   find . -type d -name ".svn"|xargs rm -rf
   echo "Delete .svn under mediatek/custom/$NEWPROJECT"
-  cd -
+  cd - > /dev/null
   
   if [ -d mediatek/custom/common/lk/logo/$NEWPROJECT ];then
      cd mediatek/custom/common/lk/logo/$NEWPROJECT
      find . -type d -name ".svn"|xargs rm -rf
      echo "Delete .svn under mediatek/custom/common/lk/logo/$NEWPROJECT"
-     cd -
+     cd - > /dev/null
   fi
 
 #  cd vendor/mediatek/$NEWPROJECT
@@ -127,9 +127,9 @@ function deleteSvn()
   then 
     if [ -d $1 ] ; then
       cd $1
-      find . -type d -name ".svn"|xargs rm -rf
       echo "  Delete .svn under $1"
-      cd -
+      find . -type d -name ".svn"|xargs rm -rf
+      cd - > /dev/null
     else
       echo "  $1 is not a directory."
     fi
