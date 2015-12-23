@@ -17,7 +17,7 @@ function func()
   if [ 0 == $? ] 
   then
     echo "$PWD is a svn directory." >> $FILENAME
-    svn up >> $FILENAME 2>&1  
+    svn up 2>&1 | tee -a $FILENAME
     echo "Result: $PWD had updated." >> $FILENAME
     echo "" >> $FILENAME 
   else 
