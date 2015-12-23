@@ -286,29 +286,34 @@ function clone_android()
     echo "vendor/sansen/libs/$NEWPROJECT is created"
     cd $ALPS_PATH
     
-    if [ "$Platform" = "mt6735" -o "$Platform" = "mt6580" ];then
-       cd vendor/mediatek/proprietary/trustzone/project/
+#    if [ "$Platform" = "mt6735" -o "$Platform" = "mt6580" ];then
+    cd vendor/mediatek/proprietary/trustzone/project/
+    if [ -e "${OLDPROJECT}.mk" ] ; then
        cp -a ${OLDPROJECT}.mk  ${NEWPROJECT}.mk
        sed -i s/${OLDPROJECT}/${NEWPROJECT}/g  ${NEWPROJECT}.mk
        echo "vendor/mediatek/proprietary/trustzone/project/${NEWPROJECT}.mk is modified"
-       cd $ALPS_PATH
-       
-       cd frameworks/base/data/sounds/media/
-       cp -a bootanimation/bootanimation_full_${OLDPROJECT}.zip  bootanimation/bootanimation_full_${NEWPROJECT}.zip 
-       cp -a bootaudio/bootaudio_full_${OLDPROJECT}.mp3   bootaudio/bootaudio_full_${NEWPROJECT}.mp3
-       echo "frameworks/base/data/sounds/media/bootanimation/bootanimation_full_${NEWPROJECT}.zip is created"
-       echo "frameworks/base/data/sounds/media/bootaudio/bootaudio_full_${NEWPROJECT}.mp3 is created"    
-
-       if [ -f shutanimation/shutanimation_full_${OLDPROJECT}.zip ];then
-          cp -a  shutanimation/shutanimation_full_${OLDPROJECT}.zip  shutanimation/shutanimation_full_${NEWPROJECT}.zip
-          echo "frameworks/base/data/sounds/media/shutanimation/shutanimation_full_${NEWPROJECT}.zip is created"
-       fi
-       if [ -f shutaudio/shutaudio_full_${OLDPROJECT}.mp3 ];then
-          cp -a  shutaudio/shutaudio_full_${OLDPROJECT}.mp3  shutaudio/shutaudio_full_${NEWPROJECT}.mp3
-          echo "frameworks/base/data/sounds/media/shutaudio/shutaudio_full_${NEWPROJECT}.mp3 is created"
-       fi
-       cd $ALPS_PATH
     fi
+    cd $ALPS_PATH
+
+    cd frameworks/base/data/sounds/media/
+    if [ -e bootanimation/bootanimation_full_${OLDPROJECT}.zip ] ; then 
+       cp -a bootanimation/bootanimation_full_${OLDPROJECT}.zip  bootanimation/bootanimation_full_${NEWPROJECT}.zip 
+       echo "frameworks/base/data/sounds/media/bootanimation/bootanimation_full_${NEWPROJECT}.zip is created"
+    fi
+    if [ -e bootaudio/bootaudio_full_${OLDPROJECT}.mp3 ] ; then
+       cp -a bootaudio/bootaudio_full_${OLDPROJECT}.mp3   bootaudio/bootaudio_full_${NEWPROJECT}.mp3
+       echo "frameworks/base/data/sounds/media/bootaudio/bootaudio_full_${NEWPROJECT}.mp3 is created" 
+    fi   
+    if [ -e shutanimation/shutanimation_full_${OLDPROJECT}.zip ];then
+       cp -a  shutanimation/shutanimation_full_${OLDPROJECT}.zip  shutanimation/shutanimation_full_${NEWPROJECT}.zip
+       echo "frameworks/base/data/sounds/media/shutanimation/shutanimation_full_${NEWPROJECT}.zip is created"
+    fi
+    if [ -e shutaudio/shutaudio_full_${OLDPROJECT}.mp3 ];then
+       cp -a  shutaudio/shutaudio_full_${OLDPROJECT}.mp3  shutaudio/shutaudio_full_${NEWPROJECT}.mp3
+       echo "frameworks/base/data/sounds/media/shutaudio/shutaudio_full_${NEWPROJECT}.mp3 is created"
+    fi
+    cd $ALPS_PATH
+#    fi
 }
 
 
