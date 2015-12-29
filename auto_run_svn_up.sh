@@ -39,6 +39,6 @@ echo "HOMEPATH = $HOMEPATH" | tee -a $FILENAME
 func $HOMEPATH
 
 cd $HOMEPATH
-echo  | tee -a $FILENAME
+echo `date` | tee -a $FILENAME
 echo "Everything is done." | tee -a $FILENAME
 
