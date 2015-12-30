@@ -2,12 +2,15 @@
 ##***********************************************************************##
 ##  Description:  This shell script is written for creating new projects ##
 ##                in differnt platforms and android versions             ##
-##  Usage:       ./NewPrj_All.sh  [Old_Project] [New_Project]            ##
+##  Usage:       ./clone_project.sh  Old_Project New_Project             ##
 ##  Author:      pengbowei                                               ##
 ##  Modify:      yanzx													 ##
-##  Date:        2015-11-10                                              ##
-##  Modify Date: 2015-11-25                                              ##
+##  Create Date: 2015-11-10                                              ##
+##  Modify Date: 2015-12-30                                              ##
 ##***********************************************************************##
+
+#### use to debug
+#set -x    
 
 if [ ! "-$2" = "-" ]; then
 ALPS_PATH=$PWD
@@ -15,15 +18,12 @@ OLDPROJECT=$1
 NEWPROJECT=$2
 NEW_FILES=" "
 
-# For Android 4.4/5.0/5.1
 echo ">>> Begin to Create New Project! " `date`  
 #read -p "your old project name: " OLDPROJECT
 #read -p "your new project name: " NEWPROJECT
 echo "your old project name: $OLDPROJECT"
 echo "your new project name: $NEWPROJECT"
 echo " $OLDPROJECT  =>  $NEWPROJECT " 
-
-cd $ALPS_PATH
 
 
 while read line
@@ -41,12 +41,25 @@ echo " Android Version :$Version "
 MainVersion=`echo $Version|awk -F '.' '{print $1}'`
 case $MainVersion in
        4)
+       ProjectDir=mediatek/config
        ProjectConfig=mediatek/config/$OLDPROJECT/ProjectConfig.mk
        ;;
        5)
+       ProjectDir=device/sansen
        ProjectConfig=device/sansen/$OLDPROJECT/ProjectConfig.mk
        ;;
 esac
+
+# Test whether OLDPROJECT exist
+if [ -d ${ProjectDir}/${OLDPROJECT} ]; then
+  if [ -d ${ProjectDir}/${NEWPROJECT} ]; then 
+    echo "Error: $NEWPROJECT is exist! "
+    exit 2 
+  fi
+else 
+  echo "Error: $OLDPROJECT not exist! "
+  exit 1 
+fi
 
 Platform=`cat $ProjectConfig | grep -E 'MTK_PLATFORM=|MTK_PLATFORM =' | cut -d '=' -f 2`
 Platform=`echo $Platform|tr "[A-Z]" "[a-z]" `
@@ -167,19 +180,20 @@ function deleteSvn()
 function clone_preloader() 
 {
     cd $ALPS_PATH
-    cd bootable/bootloader/preloader/custom/
+    Preloader=bootable/bootloader/preloader/custom
+    cd $Preloader
 
-    if [ ! -d ${NEWPROJECT} ];then
+    if [ -d ${OLDPROJECT} ] && [ ! -d ${NEWPROJECT} ];then
         cp -a ${OLDPROJECT} ${NEWPROJECT}
-        echo "bootable/bootloader/preloader/custom/${NEWPROJECT} is created "
-        deleteSvn $PWD/${NEWPROJECT}
-    NEW_FILES=$NEW_FILES"
-      bootable/bootloader/preloader/custom/${NEWPROJECT}"
+        echo "${Preloader}/${NEWPROJECT} is created. "
+        deleteSvn ${PWD}/${NEWPROJECT}
+      NEW_FILES=$NEW_FILES"
+      ${Preloader}/${NEWPROJECT}"
         mv ${NEWPROJECT}/${OLDPROJECT}.mk  ${NEWPROJECT}/${NEWPROJECT}.mk
         sed -i s/${OLDPROJECT}/${NEWPROJECT}/g  ${NEWPROJECT}/${NEWPROJECT}.mk
-        echo "bootable/bootloader/preloader/custom/${NEWPROJECT}/${NEWPROJECT}.mk is modified "
+        echo "$Preloader/${NEWPROJECT}/${NEWPROJECT}.mk is modified. "
     else
-        echo "bootable/bootloader/preloader/custom/${NEWPROJECT}  already exists!"
+        echo "Error: create ${Preloader}/${NEWPROJECT} fail!"
     fi
     cd $ALPS_PATH
 }
@@ -188,43 +202,49 @@ function clone_preloader()
 function clone_lk()
 {
     cd $ALPS_PATH
-    cd bootable/bootloader/lk
+    Lk=bootable/bootloader/lk
+    cd $Lk
 
-    if [ ! -d "target/${NEWPROJECT}" ];then     
+    if [ -d "target/${OLDPROJECT}" ] && [ ! -d "target/${NEWPROJECT}" ];then
         cp -a target/${OLDPROJECT}  target/${NEWPROJECT}
-        echo "bootable/bootloader/lk/target/${NEWPROJECT}  is created"
-        deleteSvn $PWD/target/${NEWPROJECT}
-      NEW_FILES=$NEW_FILES"
-        bootable/bootloader/lk/target/${NEWPROJECT}"
-
-        cp project/${OLDPROJECT}.mk  project/${NEWPROJECT}.mk      
+        echo "${Lk}/target/${NEWPROJECT}  is created."
         sed -i s/${OLDPROJECT}/${NEWPROJECT}/g  target/${NEWPROJECT}/include/target/cust_usb.h
-        sed -i s/${OLDPROJECT}/${NEWPROJECT}/g  project/${NEWPROJECT}.mk
-        echo "bootable/bootloader/lk/project/${NEWPROJECT}.mk is modified"
+        echo "  ${Lk}/target/${NEWPROJECT}/include/target/cust_usb.h is modified."
+        deleteSvn ${PWD}/target/${NEWPROJECT}
       NEW_FILES=$NEW_FILES"
-        bootable/bootloader/lk/project/${NEWPROJECT}.mk"
+        ${Lk}/target/${NEWPROJECT}"
+
     else
-        echo "bootable/bootloader/lk/target/${NEWPROJECT}  already exists !"
+        echo "Error: create ${Lk}/target/${NEWPROJECT} fail!"
     fi
 
-#    if [ "$Platform" = "mt8735" -o "$Platform" = "mt6735" -o "$Platform" = "mt8321" -o "$Platform" = "mt6580" ];then
+    if [ -e "project/${OLDPROJECT}.mk" ] && [ ! -e "project/${NEWPROJECT}.mk" ];then
+        cp project/${OLDPROJECT}.mk  project/${NEWPROJECT}.mk
+        sed -i s/${OLDPROJECT}/${NEWPROJECT}/g  project/${NEWPROJECT}.mk
+        echo "${Lk}/project/${NEWPROJECT}.mk is created and modified."
+      NEW_FILES=$NEW_FILES"
+        ${Lk}/project/${NEWPROJECT}.mk"
+    else
+      echo "Error: create ${Lk}/project/${NEWPROJECT}.mk fail!"
+    fi
+
     if [ -d dev/logo/full_${OLDPROJECT} ] && [ ! -d "dev/logo/full_${NEWPROJECT}" ];then 
       cp -a  dev/logo/full_${OLDPROJECT}  dev/logo/full_${NEWPROJECT}
-      echo "bootable/bootloader/lk/dev/logo/full_${NEWPROJECT} is created"
+      echo "${Lk}/dev/logo/full_${NEWPROJECT} is created"
       deleteSvn $PWD/dev/logo/full_${NEWPROJECT}
       NEW_FILES=$NEW_FILES"
-        bootable/bootloader/lk/dev/logo/full_${NEWPROJECT}"
+        ${Lk}/dev/logo/full_${NEWPROJECT}"
     else
-      echo "bootable/bootloader/lk/dev/logo/full_${NEWPROJECT} already exists !"
+      echo "Error: create ${Lk}/dev/logo/full_${NEWPROJECT} fail!"
     fi
-#    fi 
+
     cd $ALPS_PATH
 }
 
 # copy kernel module
 function clone_kernel()
 {
-
+  cd $ALPS_PATH
   if [ "$Platform" = "mt8735" -o "$Platform" = "mt6735" -o "$Platform" = "mt6580" -o "$Platform" = "mt8321" ];then
   
     if [ "$Platform" = "mt8735" -o "$Platform" = "mt6735" ];then
@@ -439,7 +459,7 @@ function clone_android()
 # main
 function main()
 {
-   case $Version in
+   case $MainVersion in
          4)
          CopyProject_KK
          DeleteSvn_KK
