@@ -313,6 +313,67 @@ function clone_kernel()
   fi   
 }
 
+function clone_Kernel()
+{
+  cd $ALPS_PATH
+  if [ -e kernel-3.10/arch/arm/configs/${OLDPROJECT}_debug_defconfig ]; then 
+    ARM=kernel-3.10/arch/arm
+  elif [ -e kernel-3.10/arch/arm64/configs/${OLDPROJECT}_debug_defconfig ]; then 
+    ARM=kernel-3.10/arch/arm64
+  else 
+    ARM=null
+    echo "Error: ${OLDPROJECT}_debug_defconfig file can not find."
+  fi
+
+  if [ "null" != "${ARM}" ]; then
+    cd ${ARM}
+    if [ ! -e configs/${NEWPROJECT}_debug_defconfig ]; then
+      cp configs/${OLDPROJECT}_defconfig  configs/${NEWPROJECT}_defconfig
+      cp configs/${OLDPROJECT}_debug_defconfig  configs/${NEWPROJECT}_debug_defconfig
+	  sed -i s/${OLDPROJECT}/${NEWPROJECT}/g  configs/${NEWPROJECT}_defconfig
+	  sed -i s/${OLDPROJECT}/${NEWPROJECT}/g  configs/${NEWPROJECT}_debug_defconfig
+      echo "${ARM}/configs/${NEWPROJECT}_defconfig is modified."
+      echo "${ARM}/configs/${NEWPROJECT}_debug_defconfig is modified."
+      NEW_FILES=$NEW_FILES"
+        ${ARM}/configs/${NEWPROJECT}_defconfig
+        ${ARM}/configs/${NEWPROJECT}_debug_defconfig"
+    else
+      echo "Error: create ${NEWPROJECT}_debug_defconfig fail!" 
+    fi
+
+    if [ -e boot/dts/${OLDPROJECT}.dts ] && [ ! -e boot/dts/${NEWPROJECT}.dts ]; then
+	  cp boot/dts/${OLDPROJECT}.dts  boot/dts/${NEWPROJECT}.dts
+      echo "$ARM/boot/dts/${NEWPROJECT}.dts is created."
+      NEW_FILES=$NEW_FILES"
+        ${ARM}/boot/dts/${NEWPROJECT}.dts"
+    fi
+    cd $ALPS_PATH
+  fi
+ 
+  if [ -d ${ARM}/mach-${Platform}/${OLDPROJECT} ] && [ ! -d ${ARM}/mach-${Platform}/${NEWPROJECT} ]; then
+    cd ${ARM}
+    cp -a mach-${Platform}/${OLDPROJECT}  mach-${Platform}/${NEWPROJECT}
+    echo "${ARM}/mach-${Platform}/${NEWPROJECT} is created."
+    deleteSvn $PWD/mach-${Platform}/${NEWPROJECT}
+    NEW_FILES=$NEW_FILES"
+      ${ARM}/mach-${Platform}/${NEWPROJECT}"
+    cd $ALPS_PATH
+  else
+    MACH=kernel-3.10/drivers/misc/mediatek/mach
+    if [ -d ${MACH}/${Platform}/${OLDPROJECT} ] && [ ! -d ${MACH}/${Platform}/${NEWPROJECT} ]; then
+      cd ${MACH}
+      cp -a ${Platform}/${OLDPROJECT}  ${Platform}/${NEWPROJECT}
+      echo "${MACH}/${Platform}/${NEWPROJECT} is created." 
+      deleteSvn $PWD/${Platform}/${NEWPROJECT}
+      NEW_FILES=$NEW_FILES"
+        ${MACH}/${Platform}/${NEWPROJECT}"
+      cd $ALPS_PATH
+    else
+      echo "Error: create kernel.../${Platform}/${NEWPROJECT} fail!" 
+    fi
+  fi
+}
+
 # copy  android module
 function clone_android() 
 {
