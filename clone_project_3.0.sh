@@ -1,13 +1,21 @@
 #!/bin/bash
+
 ##***********************************************************************##
 ##  Description:  This shell script is written for creating new projects ##
 ##                in differnt platforms and android versions             ##
 ##  Usage:       ./clone_project.sh  Old_Project New_Project             ##
 ##  Author:      pengbowei                                               ##
-##  Modify:      yanzx													 ##
+##  Modify:      yanzhenxing										     ##
 ##  Create Date: 2015-11-10                                              ##
-##  Modify Date: 2015-12-30                                              ##
+##  Modify Date: 2015-12-31                                              ##
 ##***********************************************************************##
+
+#################
+##  Version 3.0
+##  --- 2015-12-31
+##  --- rewrite clone function about Android 5.x  by yanzhenxing
+##
+################
 
 #### use to debug
 #set -x    
@@ -50,7 +58,7 @@ case $MainVersion in
        ;;
 esac
 
-# Test whether OLDPROJECT exist
+# Test whether OLDPROJECT and NEWPROJECT exist or not
 if [ -d ${ProjectDir}/${OLDPROJECT} ]; then
   if [ -d ${ProjectDir}/${NEWPROJECT} ]; then 
     echo "Error: $NEWPROJECT is exist! "
@@ -191,7 +199,7 @@ function clone_preloader()
       ${Preloader}/${NEWPROJECT}"
         mv ${NEWPROJECT}/${OLDPROJECT}.mk  ${NEWPROJECT}/${NEWPROJECT}.mk
         sed -i s/${OLDPROJECT}/${NEWPROJECT}/g  ${NEWPROJECT}/${NEWPROJECT}.mk
-        echo "$Preloader/${NEWPROJECT}/${NEWPROJECT}.mk is modified. "
+        echo "  $Preloader/${NEWPROJECT}/${NEWPROJECT}.mk is modified. "
     else
         echo "Error: create ${Preloader}/${NEWPROJECT} fail!"
     fi
@@ -234,8 +242,6 @@ function clone_lk()
       deleteSvn $PWD/dev/logo/full_${NEWPROJECT}
       NEW_FILES=$NEW_FILES"
         ${Lk}/dev/logo/full_${NEWPROJECT}"
-    else
-      echo "Error: create ${Lk}/dev/logo/full_${NEWPROJECT} fail!"
     fi
 
     cd $ALPS_PATH
@@ -313,6 +319,7 @@ function clone_kernel()
   fi   
 }
 
+# yanzx
 function clone_Kernel()
 {
   cd $ALPS_PATH
@@ -332,8 +339,8 @@ function clone_Kernel()
       cp configs/${OLDPROJECT}_debug_defconfig  configs/${NEWPROJECT}_debug_defconfig
 	  sed -i s/${OLDPROJECT}/${NEWPROJECT}/g  configs/${NEWPROJECT}_defconfig
 	  sed -i s/${OLDPROJECT}/${NEWPROJECT}/g  configs/${NEWPROJECT}_debug_defconfig
-      echo "${ARM}/configs/${NEWPROJECT}_defconfig is modified."
-      echo "${ARM}/configs/${NEWPROJECT}_debug_defconfig is modified."
+      echo "${ARM}/configs/${NEWPROJECT}_defconfig is created and modified."
+      echo "${ARM}/configs/${NEWPROJECT}_debug_defconfig is created and modified."
       NEW_FILES=$NEW_FILES"
         ${ARM}/configs/${NEWPROJECT}_defconfig
         ${ARM}/configs/${NEWPROJECT}_debug_defconfig"
@@ -377,85 +384,98 @@ function clone_Kernel()
 # copy  android module
 function clone_android() 
 {
-    if [ ! -d "device/sansen/${NEWPROJECT}" ];then
+    cd $ALPS_PATH
+    if [ -d device/sansen/${OLDPROJECT} ] && [ ! -d "device/sansen/${NEWPROJECT}" ]; then
         cp -a device/sansen/${OLDPROJECT}  device/sansen/${NEWPROJECT}
-        echo "device/sansen/${NEWPROJECT} is created"
+        echo "device/sansen/${NEWPROJECT} is created."
         deleteSvn $PWD/device/sansen/${NEWPROJECT}
       NEW_FILES=$NEW_FILES"
         device/sansen/${NEWPROJECT}"
 
         mv device/sansen/${NEWPROJECT}/full_${OLDPROJECT}.mk  device/sansen/${NEWPROJECT}/full_${NEWPROJECT}.mk
         sed -i s/${OLDPROJECT}/${NEWPROJECT}/g  device/sansen/${NEWPROJECT}/full_${NEWPROJECT}.mk
-        echo "device/sansen/${NEWPROJECT}/full_${NEWPROJECT}.mk is modified"
+        echo "  device/sansen/${NEWPROJECT}/full_${NEWPROJECT}.mk is modified"
        #sed -i s/${OLDPROJECT}/${NEWPROJECT}/g  device/sansen/${NEWPROJECT}/AndroidBoard.mk
         sed -i s/${OLDPROJECT}/${NEWPROJECT}/g  device/sansen/${NEWPROJECT}/AndroidProducts.mk
         sed -i s/${OLDPROJECT}/${NEWPROJECT}/g  device/sansen/${NEWPROJECT}/BoardConfig.mk
         sed -i s/${OLDPROJECT}/${NEWPROJECT}/g  device/sansen/${NEWPROJECT}/device.mk
         sed -i s/${OLDPROJECT}/${NEWPROJECT}/g  device/sansen/${NEWPROJECT}/vendorsetup.sh
     else
-        echo "device/sansen/${NEWPROJECT} already exists!"
+        echo "Error: create device/sansen/${NEWPROJECT} fail!"
     fi
 
-    if [ ! -d "vendor/mediatek/proprietary/custom/${NEWPROJECT}" ];then
-        cp -a vendor/mediatek/proprietary/custom/${OLDPROJECT}  vendor/mediatek/proprietary/custom/${NEWPROJECT}
+    VENDOR=vendor/mediatek/proprietary/custom
+    if [ -d ${VENDOR}/${OLDPROJECT} ] && [ ! -d ${VENDOR}/${NEWPROJECT} ]; then
+        cp -a ${VENDOR}/${OLDPROJECT}  ${VENDOR}/${NEWPROJECT}
         # sed -i s/${BASE_PROJECT}/${NEW_PROJECT}/g  vendor/mediatek/proprietary/custom/${NEW_PROJECT}/Android.mk
-        echo "vendor/mediatek/proprietary/custom/${NEWPROJECT} is created"
-        deleteSvn $PWD/vendor/mediatek/proprietary/custom/${NEWPROJECT}
+        echo "${VENDOR}/${NEWPROJECT} is created."
+        deleteSvn $PWD/${VENDOR}/${NEWPROJECT}
       NEW_FILES=$NEW_FILES"
-        vendor/mediatek/proprietary/custom/${NEWPROJECT}"
+        ${VENDOR}/${NEWPROJECT}"
     else
-        echo "vendor/mediatek/proprietary/custom/${NEWPROJECT}  already exists!"
+        echo "Error: create ${VENDOR}/${NEWPROJECT} fail!"
     fi
-    # share libs
-    # sed -i s#vendor/${COMPANY}/libs/${NEW_PROJECT}#vendor/${COMPANY}/libs/${BASE_PROJECT}#g \
-    # device/${COMPANY}/${NEW_PROJECT}/device.mk
-    # no share libs 
-    # cp -r vendor/${COMPANY}/libs/${BASE_PROJECT} vendor/${COMPANY}/libs/${NEW_PROJECT}
-    cd vendor/sansen/libs/
-    ln -sf  ${OLDPROJECT} ${NEWPROJECT}
-    echo "vendor/sansen/libs/$NEWPROJECT is created"
-    NEW_FILES=$NEW_FILES"
-      vendor/sansen/libs/${NEWPROJECT}"
-    cd $ALPS_PATH
-    
-#    if [ "$Platform" = "mt6735" -o "$Platform" = "mt6580" ];then
-    cd vendor/mediatek/proprietary/trustzone/project/
-    if [ -e "${OLDPROJECT}.mk" ] ; then
-       cp -a ${OLDPROJECT}.mk  ${NEWPROJECT}.mk
-       sed -i s/${OLDPROJECT}/${NEWPROJECT}/g  ${NEWPROJECT}.mk
-       echo "vendor/mediatek/proprietary/trustzone/project/${NEWPROJECT}.mk is modified"
-      NEW_FILES=$NEW_FILES"
-        vendor/mediatek/proprietary/trustzone/project/${NEWPROJECT}.mk"
-    fi
-    cd $ALPS_PATH
 
-    cd frameworks/base/data/sounds/media/
+    LIBS=vendor/sansen/libs
+    if [ -e ${LIBS}/${OLDPROJECT} ] && [ ! -e ${LIBS}/${NEWPROJECT} ]; then
+      cd ${LIBS}
+      ln -sf  ${OLDPROJECT} ${NEWPROJECT}
+      echo "${LIBS}/${NEWPROJECT} is created."
+      NEW_FILES=$NEW_FILES"
+        ${LIBS}/${NEWPROJECT}"
+      cd $ALPS_PATH
+    else
+      echo "Error: create ${LIBS}/${NEWPROJECT} fail!"
+    fi
+    
+    TRUSTZONE=vendor/mediatek/proprietary/trustzone/project
+    if [ -e ${TRUSTZONE}/${OLDPROJECT}.mk ] && [ ! -e ${TRUSTZONE}/${NEWPROJECT}.mk ]; then
+      cd ${TRUSTZONE}
+      cp -a ${OLDPROJECT}.mk  ${NEWPROJECT}.mk
+      sed -i s/${OLDPROJECT}/${NEWPROJECT}/g  ${NEWPROJECT}.mk
+      echo "${TRUSTZONE}/${NEWPROJECT}.mk is created and modified."
+      NEW_FILES=$NEW_FILES"
+        ${TRUSTZONE}/${NEWPROJECT}.mk"
+      cd $ALPS_PATH
+    fi
+
+    SECURITY=device/mediatek/common/security
+    if [ -d ${SECURITY}/${OLDPROJECT} ] && [ ! -d ${SECURITY}/${NEWPROJECT} ]; then
+      cd ${SECURITY}
+      cp -a ${OLDPROJECT}  ${NEWPROJECT}
+      echo "${SECURITY}/${NEWPROJECT} is created."
+      NEW_FILES=$NEW_FILES"
+        ${SECURITY}/${NEWPROJECT}"
+      cd $ALPS_PATH
+    fi
+
+    MEDIA=frameworks/base/data/sounds/media
+    cd ${MEDIA}
     if [ -e bootanimation/bootanimation_full_${OLDPROJECT}.zip ] ; then 
        cp -a bootanimation/bootanimation_full_${OLDPROJECT}.zip  bootanimation/bootanimation_full_${NEWPROJECT}.zip 
-       echo "frameworks/base/data/sounds/media/bootanimation/bootanimation_full_${NEWPROJECT}.zip is created"
+       echo "${MEDIA}/bootanimation/bootanimation_full_${NEWPROJECT}.zip is created."
       NEW_FILES=$NEW_FILES"
-        frameworks/base/data/sounds/media/bootanimation/bootanimation_full_${NEWPROJECT}.zip"
+        ${MEDIA}/bootanimation/bootanimation_full_${NEWPROJECT}.zip"
     fi
     if [ -e bootaudio/bootaudio_full_${OLDPROJECT}.mp3 ] ; then
        cp -a bootaudio/bootaudio_full_${OLDPROJECT}.mp3   bootaudio/bootaudio_full_${NEWPROJECT}.mp3
-       echo "frameworks/base/data/sounds/media/bootaudio/bootaudio_full_${NEWPROJECT}.mp3 is created" 
+       echo "${MEDIA}/bootaudio/bootaudio_full_${NEWPROJECT}.mp3 is created" 
       NEW_FILES=$NEW_FILES"
-        frameworks/base/data/sounds/media/bootaudio/bootaudio_full_${NEWPROJECT}.mp3"
+        ${MEDIA}/bootaudio/bootaudio_full_${NEWPROJECT}.mp3"
     fi   
     if [ -e shutanimation/shutanimation_full_${OLDPROJECT}.zip ];then
        cp -a  shutanimation/shutanimation_full_${OLDPROJECT}.zip  shutanimation/shutanimation_full_${NEWPROJECT}.zip
-       echo "frameworks/base/data/sounds/media/shutanimation/shutanimation_full_${NEWPROJECT}.zip is created"
+       echo "${MEDIA}/shutanimation/shutanimation_full_${NEWPROJECT}.zip is created"
       NEW_FILES=$NEW_FILES"
-        frameworks/base/data/sounds/media/shutanimation/shutanimation_full_${NEWPROJECT}.zip"
+        ${MEDIA}/shutanimation/shutanimation_full_${NEWPROJECT}.zip"
     fi
     if [ -e shutaudio/shutaudio_full_${OLDPROJECT}.mp3 ];then
        cp -a  shutaudio/shutaudio_full_${OLDPROJECT}.mp3  shutaudio/shutaudio_full_${NEWPROJECT}.mp3
-       echo "frameworks/base/data/sounds/media/shutaudio/shutaudio_full_${NEWPROJECT}.mp3 is created"
+       echo "${MEDIA}/shutaudio/shutaudio_full_${NEWPROJECT}.mp3 is created"
       NEW_FILES=$NEW_FILES"
-        frameworks/base/data/sounds/media/shutaudio/shutaudio_full_${NEWPROJECT}.mp3"
+        ${MEDIA}/shutaudio/shutaudio_full_${NEWPROJECT}.mp3"
     fi
     cd $ALPS_PATH
-#    fi
 }
 
 
@@ -464,7 +484,8 @@ function clone_android()
 {
   clone_preloader
   clone_lk
-  clone_kernel
+  #clone_kernel
+  clone_Kernel
   clone_android
   echo ">>> Copy Successfully!"
   echo " "
