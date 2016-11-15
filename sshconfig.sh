@@ -10,7 +10,7 @@ echo "Start ssh agent..."
 eval `ssh-agent -s`
 echo 
 echo "add my rsa..."
-ssh-add ~/.ssh/*_rsa
+ssh-add ~/.ssh/yzxqqcom_rsa
 echo
 
 ssh-add -l 
