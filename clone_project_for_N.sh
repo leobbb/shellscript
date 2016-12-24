@@ -65,7 +65,7 @@ else
 fi
 
 echo "Clone preloader:"
-if [ -d ${PRELOADER}/custom/${NEW_PROJECT}]; then
+if [ -d ${PRELOADER}/custom/${NEW_PROJECT} ]; then
     echo "Warning: preloader of ${NEW_PROJECT} is exist"
     echo "Skip preloader"
 else
@@ -77,7 +77,7 @@ else
 fi
 
 echo "Clone lk"
-if [ -d ${LK}/target/${NEW_PROJECT}]; then
+if [ -d ${LK}/target/${NEW_PROJECT} ]; then
     echo "Warning: lk of ${NEW_PROJECT} is exit"
     echo "Skip lk"
 else
@@ -92,13 +92,11 @@ else
 fi
 
 echo "Clone kernel"
-if [ -f ${KERNEL}/arch/arm64/configs/${NEW_PROJECT}_defconfig]; then
+if [ -f ${KERNEL}/arch/arm64/configs/${NEW_PROJECT}_defconfig ]; then
     echo "Warning: kernel of ${NEW_PROJECT} is exit"
     echo "Skip kernel"
 else
     #cp -r kernel-3.18/drivers/misc/mediatek/mach/mt6735/${BASE_PROJECT} kernel-3.18/drivers/misc/mediatek/mach/mt6735/${NEW_PROJECT}
-    #cp -r kernel-3.18/drivers/misc/mediatek/imgsensor/src/mt6735m/camera_project/${BASE_PROJECT} kernel-3.18/drivers/misc/mediatek/imgsensor/src/mt6735m/camera_project/${NEW_PROJECT} 
-    #cp -f kernel-3.18/drivers/misc/mediatek/flashlight/src/mt6735/${BASE_PROJECT} kernel-3.18/drivers/misc/mediatek/flashlight/src/mt6735/${NEW_PROJECT} 
     cp ${KERNEL}/arch/arm64/configs/${BASE_PROJECT}_defconfig ${KERNEL}/arch/arm64/configs/${NEW_PROJECT}_defconfig
     cp ${KERNEL}/arch/arm64/configs/${BASE_PROJECT}_debug_defconfig ${KERNEL}/arch/arm64/configs/${NEW_PROJECT}_debug_defconfig
     echo "Create  ${KERNEL}/arch/arm64/configs/${NEW_PROJECT}_defconfig"
@@ -115,6 +113,16 @@ else
     cp ${KERNEL}/drivers/misc/mediatek/dws/mt6735/${BASE_PROJECT}.dws ${KERNEL}/drivers/misc/mediatek/dws/mt6735/${NEW_PROJECT}.dws
     echo "Create  ${KERNEL}/drivers/misc/mediatek/dws/mt6735/${NEW_PROJECT}.dws"
     NEW_FILES="${NEW_FILES} ${KERNEL}/drivers/misc/mediatek/dws/mt6735/${NEW_PROJECT}.dws"
+    if [ -e ${KERNEL}/drivers/misc/mediatek/imgsensor/src/mt6735m/camera_project/${BASE_PROJECT} ]; then
+	cp -ra ${KERNEL}/drivers/misc/mediatek/imgsensor/src/mt6735m/camera_project/${BASE_PROJECT} ${KERNEL}/drivers/misc/mediatek/imgsensor/src/mt6735m/camera_project/${NEW_PROJECT}
+	echo "Create ${KERNEL}/drivers/misc/mediatek/imgsensor/src/mt6735m/camera_project/${NEW_PROJECT}"
+	NEW_FILES="${NEW_FILES} ${KERNEL}/drivers/misc/mediatek/imgsensor/src/mt6735m/camera_project/${NEW_PROJECT}"
+    fi
+    if [ -e ${KERNEL}/drivers/misc/mediatek/flashlight/src/mt6735/${BASE_PROJECT} ]; then
+	cp -ra ${KERNEL}/drivers/misc/mediatek/flashlight/src/mt6735/${BASE_PROJECT} ${KERNEL}/drivers/misc/mediatek/flashlight/src/mt6735/${NEW_PROJECT}
+	echo "Create ${KERNEL}/drivers/misc/mediatek/flashlight/src/mt6735/${NEW_PROJECT}"
+	NEW_FILES="${NEW_FILES} ${KERNEL}/drivers/misc/mediatek/flashlight/src/mt6735/${NEW_PROJECT}"
+    fi
 fi
 
 echo "Clone android"
