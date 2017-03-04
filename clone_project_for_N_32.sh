@@ -92,24 +92,24 @@ else
 fi
 
 echo "Clone kernel"
-if [ -f ${KERNEL}/arch/arm64/configs/${NEW_PROJECT}_defconfig ]; then
+if [ -f ${KERNEL}/arch/arm/configs/${NEW_PROJECT}_defconfig ]; then
     echo "Warning: kernel of ${NEW_PROJECT} is exit"
     echo "Skip kernel"
 else
     #cp -r kernel-3.18/drivers/misc/mediatek/mach/mt6735/${BASE_PROJECT} kernel-3.18/drivers/misc/mediatek/mach/mt6735/${NEW_PROJECT}
-    cp ${KERNEL}/arch/arm64/configs/${BASE_PROJECT}_defconfig ${KERNEL}/arch/arm64/configs/${NEW_PROJECT}_defconfig
-    cp ${KERNEL}/arch/arm64/configs/${BASE_PROJECT}_debug_defconfig ${KERNEL}/arch/arm64/configs/${NEW_PROJECT}_debug_defconfig
-    echo "Create  ${KERNEL}/arch/arm64/configs/${NEW_PROJECT}_defconfig"
-    echo "Create  ${KERNEL}/arch/arm64/configs/${NEW_PROJECT}_debug_defconfig"
-    NEW_FILES="${NEW_FILES} ${KERNEL}/arch/arm64/configs/${NEW_PROJECT}_debug_defconfig ${KERNEL}/arch/arm64/configs/${NEW_PROJECT}_defconfig"
-    sed -i s/${BASE_PROJECT}/${NEW_PROJECT}/g ${KERNEL}/arch/arm64/configs/${NEW_PROJECT}_defconfig
-    sed -i s/${BASE_PROJECT}/${NEW_PROJECT}/g ${KERNEL}/arch/arm64/configs/${NEW_PROJECT}_debug_defconfig
-    cp ${KERNEL}/arch/arm64/boot/dts/${BASE_PROJECT}.dts ${KERNEL}/arch/arm64/boot/dts/${NEW_PROJECT}.dts
-    cp ${KERNEL}/arch/arm64/boot/dts/${BASE_PROJECT}_bat_setting.dtsi ${KERNEL}/arch/arm64/boot/dts/${NEW_PROJECT}_bat_setting.dtsi
-    echo "Create  ${KERNEL}/arch/arm64/boot/dts/${NEW_PROJECT}.dts"
-    echo "Create  ${KERNEL}/arch/arm64/boot/dts/${NEW_PROJECT}_bat_setting.dtsi"
-    NEW_FILES="${NEW_FILES} ${KERNEL}/arch/arm64/boot/dts/${NEW_PROJECT}_bat_setting.dtsi ${KERNEL}/arch/arm64/boot/dts/${NEW_PROJECT}.dts"
-    sed -i s/${BASE_PROJECT}/${NEW_PROJECT}/g ${KERNEL}/arch/arm64/boot/dts/${NEW_PROJECT}.dts
+    cp ${KERNEL}/arch/arm/configs/${BASE_PROJECT}_defconfig ${KERNEL}/arch/arm/configs/${NEW_PROJECT}_defconfig
+    cp ${KERNEL}/arch/arm/configs/${BASE_PROJECT}_debug_defconfig ${KERNEL}/arch/arm/configs/${NEW_PROJECT}_debug_defconfig
+    echo "Create  ${KERNEL}/arch/arm/configs/${NEW_PROJECT}_defconfig"
+    echo "Create  ${KERNEL}/arch/arm/configs/${NEW_PROJECT}_debug_defconfig"
+    NEW_FILES="${NEW_FILES} ${KERNEL}/arch/arm/configs/${NEW_PROJECT}_debug_defconfig ${KERNEL}/arch/arm/configs/${NEW_PROJECT}_defconfig"
+    sed -i s/${BASE_PROJECT}/${NEW_PROJECT}/g ${KERNEL}/arch/arm/configs/${NEW_PROJECT}_defconfig
+    sed -i s/${BASE_PROJECT}/${NEW_PROJECT}/g ${KERNEL}/arch/arm/configs/${NEW_PROJECT}_debug_defconfig
+    cp ${KERNEL}/arch/arm/boot/dts/${BASE_PROJECT}.dts ${KERNEL}/arch/arm/boot/dts/${NEW_PROJECT}.dts
+    cp ${KERNEL}/arch/arm/boot/dts/${BASE_PROJECT}_bat_setting.dtsi ${KERNEL}/arch/arm/boot/dts/${NEW_PROJECT}_bat_setting.dtsi
+    echo "Create  ${KERNEL}/arch/arm/boot/dts/${NEW_PROJECT}.dts"
+    echo "Create  ${KERNEL}/arch/arm/boot/dts/${NEW_PROJECT}_bat_setting.dtsi"
+    NEW_FILES="${NEW_FILES} ${KERNEL}/arch/arm/boot/dts/${NEW_PROJECT}_bat_setting.dtsi ${KERNEL}/arch/arm/boot/dts/${NEW_PROJECT}.dts"
+    sed -i s/${BASE_PROJECT}/${NEW_PROJECT}/g ${KERNEL}/arch/arm/boot/dts/${NEW_PROJECT}.dts
     cp ${KERNEL}/drivers/misc/mediatek/dws/mt6735/${BASE_PROJECT}.dws ${KERNEL}/drivers/misc/mediatek/dws/mt6735/${NEW_PROJECT}.dws
     echo "Create  ${KERNEL}/drivers/misc/mediatek/dws/mt6735/${NEW_PROJECT}.dws"
     NEW_FILES="${NEW_FILES} ${KERNEL}/drivers/misc/mediatek/dws/mt6735/${NEW_PROJECT}.dws"
