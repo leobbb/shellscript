@@ -3,6 +3,7 @@
 # Version 1.0
 # this file is use for clone newproject form baseproject.(code controled by git,if controled by svn,you should delete .svn files else) 
 # Android 7.0
+# mt6737
 # under alps and execute: 
 # ./clone_project_for_N.sh  BASE_PROJECT NEW_PROJECT
 #
