@@ -75,7 +75,7 @@ echo "New project: $NEW_PROJECT"
 echo "$BASE_PROJECT  ==>  $NEW_PROJECT" 
 echo 
 
-#/////////////////// Clone Preloader /////////////////////////////////
+#/////////////////// Clone Preloader //////////////////////////////////////////////////////////////////
 echo "Clone preloader:"
 if [ -d ${PRELOADER}/custom/${NEW_PROJECT} ]; then
     echo "Warning: preloader of ${NEW_PROJECT} is exist"
@@ -88,6 +88,7 @@ else
     sed -i s/${BASE_PROJECT}/${NEW_PROJECT}/g ${PRELOADER}/custom/${NEW_PROJECT}/${NEW_PROJECT}.mk
 fi
 
+#/////////////////// Clone lk  //////////////////////////////////////////////////////////////////
 echo "Clone lk"
 if [ -d ${LK}/target/${NEW_PROJECT} ]; then
     echo "Warning: lk of ${NEW_PROJECT} is exit"
@@ -103,6 +104,7 @@ else
     sed -i s/${BASE_PROJECT}/${NEW_PROJECT}/g ${LK}/project/${NEW_PROJECT}.mk
 fi
 
+#/////////////////// Clone kernel  //////////////////////////////////////////////////////////////////
 echo "Clone kernel"
 if [ -f ${KERNEL}/arch/${ARM}/configs/${NEW_PROJECT}_defconfig ]; then
     echo "Warning: kernel of ${NEW_PROJECT} is exit"
@@ -140,7 +142,7 @@ else
     PLATFORM=`grep -r CONFIG_MTK_PLATFORM ${KERNEL}/arch/${ARM}/configs/${BASE_PROJECT}_defconfig | awk -F '=' '{ print $2}'`
     echo "PLATFORM = "$PLATFORM
 
-#############  mt6735 #####################
+############# for mt8735  (mt6735) #####################
     if [ ${PLATFORM} == '"mt6735"' ]; then
 	cp ${KERNEL}/drivers/misc/mediatek/dws/mt6735/${BASE_PROJECT}.dws ${KERNEL}/drivers/misc/mediatek/dws/mt6735/${NEW_PROJECT}.dws 2> /dev/null
 	if [ $? == 0 ]; then
@@ -165,7 +167,7 @@ else
 	    fi
 	fi
     fi
-#############  mt6580 #####################
+############# for mt8321 ( mt6580) #####################
     if [ ${PLATFORM} == '"mt6580"' ]; then
 	cp ${KERNEL}/drivers/misc/mediatek/dws/mt6580/${BASE_PROJECT}.dws ${KERNEL}/drivers/misc/mediatek/dws/mt6580/${NEW_PROJECT}.dws 2> /dev/null
 	if [ $? == 0 ]; then
@@ -192,6 +194,7 @@ else
     fi
 fi
 
+#/////////////////// Clone android  //////////////////////////////////////////////////////////////////
 echo "Clone android"
 cp -r ${PROJECTDIR}/${BASE_PROJECT} ${PROJECTDIR}/${NEW_PROJECT} 2>&1
 if [ $? == 0 ]; then
