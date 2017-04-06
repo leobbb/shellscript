@@ -208,6 +208,14 @@ if [ $? == 0 ]; then
   sed -i s/${BASE_PROJECT}/${NEW_PROJECT}/g ${PROJECTDIR}/${NEW_PROJECT}/vendorsetup.sh
 fi
 
+### when (MTK_SIGNATURE_CUSTOMIZATION = yes)
+SECURITYDIR=device/mediatek/common/security
+cp -r ${SECURITYDIR}/${BASE_PROJECT} ${SECURITYDIR}/${NEW_PROJECT} &> /dev/null
+if [ $? == 0 ]; then
+  echo "Create  ${SECURITYDIR}/${NEW_PROJECT}"
+  NEW_FILES="${NEW_FILES} ${SECURITYDIR}/${NEW_PROJECT}"
+fi
+
 cp -r ${HAL}/${BASE_PROJECT} ${HAL}/${NEW_PROJECT} 2>&1
 if [ $? == 0 ]; then
   echo "Create  ${HAL}/${NEW_PROJECT}"
@@ -227,6 +235,8 @@ if [ $? == 0 ]; then
   echo "Create  vendor/mikimobile/libs/${NEW_PROJECT}"
   NEW_FILES="${NEW_FILES} vendor/mikimobile/libs/${NEW_PROJECT}"
 fi
+
+#### TODO: clone bootanimation and sound
 
 echo 
 #echo '$NEW_FILES= '$NEW_FILES
