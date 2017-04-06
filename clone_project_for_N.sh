@@ -275,8 +275,8 @@ if [ $? == 0 ]; then
 fi
 
 echo 
-#echo '$NEW_FILES= '$NEW_FILES
-#echo
+echo "ALL_FILES: "$NEW_FILES
+echo
 echo `date`
 echo ">>>>>> Copy Done <<<<<<"
 
