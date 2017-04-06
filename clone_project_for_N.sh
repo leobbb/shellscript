@@ -236,7 +236,43 @@ if [ $? == 0 ]; then
   NEW_FILES="${NEW_FILES} vendor/mikimobile/libs/${NEW_PROJECT}"
 fi
 
-#### TODO: clone bootanimation and sound
+####  clone logo and bootanimation and audio
+#//// logo
+LOGODIR=vendor/mediatek/proprietary/bootable/bootloader/lk/dev/logo
+cp -r ${LOGODIR}/full_${BASE_PROJECT}  ${LOGODIR}/full_${NEW_PROJECT} &> /dev/null
+if [ $? == 0 ]; then
+  echo "Create  ${LOGODIR}/full_${NEW_PROJECT}"
+  NEW_FILES="${NEW_FILES} ${LOGODIR}/full_${NEW_PROJECT}"
+fi
+#//// boot animation
+BOOTANIMATIONDIR=frameworks/base/data/sounds/media/bootanimation
+cp -r ${BOOTANIMATIONDIR}/bootanimation_full_${BASE_PROJECT}.zip ${BOOTANIMATIONDIR}/bootanimation_full_${NEW_PROJECT}.zip &> /dev/null
+if [ $? == 0 ]; then
+  echo "Create  ${BOOTANIMATIONDIR}/bootanimation_full_${NEW_PROJECT}.zip"
+  NEW_FILES="${NEW_FILES} ${BOOTANIMATIONDIR}/bootanimation_full_${NEW_PROJECT}.zip"
+fi
+#//// boot audio
+BOOTAUDIODIR=frameworks/base/data/sounds/media/bootaudio
+cp -r ${BOOTAUDIODIR}/bootaudio_full_${BASE_PROJECT}.mp3 ${BOOTAUDIODIR}/bootaudio_full_${NEW_PROJECT}.mp3 &> /dev/null
+if [ $? == 0 ]; then
+  echo "Create  ${BOOTAUDIODIR}/bootaudio_full_${NEW_PROJECT}.mp3"
+  NEW_FILES="${NEW_FILES} ${BOOTAUDIODIR}/bootaudio_full_${NEW_PROJECT}.mp3"
+fi
+
+#//// shut animation
+SHUTANIMATIONDIR=frameworks/base/data/sounds/media/shutanimation
+cp -r ${SHUTANIMATIONDIR}/shutanimation_full_${BASE_PROJECT}.zip ${SHUTANIMATIONDIR}/shutanimation_full_${NEW_PROJECT}.zip &> /dev/null
+if [ $? == 0 ]; then
+  echo "Create  ${SHUTANIMATIONDIR}/shutanimation_full_${NEW_PROJECT}.zip"
+  NEW_FILES="${NEW_FILES} ${SHUTANIMATIONDIR}/shutanimation_full_${NEW_PROJECT}.zip"
+fi
+#//// shut audio
+SHUTAUDIODIR=frameworks/base/data/sounds/media/shutaudio
+cp -r ${SHUTAUDIODIR}/shutaudio_full_${BASE_PROJECT}.mp3 ${SHUTAUDIODIR}/shutaudio_full_${NEW_PROJECT}.mp3 &> /dev/null
+if [ $? == 0 ]; then
+  echo "Create  ${SHUTAUDIODIR}/shutaudio_full_${NEW_PROJECT}.mp3"
+  NEW_FILES="${NEW_FILES} ${SHUTAUDIODIR}/shutaudio_full_${NEW_PROJECT}.mp3"
+fi
 
 echo 
 #echo '$NEW_FILES= '$NEW_FILES
