@@ -120,23 +120,24 @@ else
       sed -i s/${BASE_PROJECT}/${NEW_PROJECT}/g ${KERNEL}/arch/${ARM}/configs/${NEW_PROJECT}_debug_defconfig
       NEW_FILES="${NEW_FILES} ${KERNEL}/arch/${ARM}/configs/${NEW_PROJECT}_debug_defconfig ${KERNEL}/arch/${ARM}/configs/${NEW_PROJECT}_defconfig"
     else 
-      echo "    Error: ${KERNEL}/arch/${ARM}/configs/${BASE_PROJECT}_defconfig not exist "
+      echo "    Error: create ${KERNEL}/arch/${ARM}/configs/${NEW_PROJECT}_defconfig failed"
     fi
 
     cp ${KERNEL}/arch/${ARM}/boot/dts/${BASE_PROJECT}.dts ${KERNEL}/arch/${ARM}/boot/dts/${NEW_PROJECT}.dts &> /dev/null
     if [ $? == 0 ]; then
       sed -i s/${BASE_PROJECT}/${NEW_PROJECT}/g ${KERNEL}/arch/${ARM}/boot/dts/${NEW_PROJECT}.dts
       echo "Create  ${KERNEL}/arch/${ARM}/boot/dts/${NEW_PROJECT}.dts"
+      NEW_FILES="${NEW_FILES} ${KERNEL}/arch/${ARM}/boot/dts/${NEW_PROJECT}.dts"
     else
-      echo "    Error: ${KERNEL}/arch/${ARM}/boot/dts/${BASE_PROJECT}.dts not exist"
+      echo "    Error: create ${KERNEL}/arch/${ARM}/boot/dts/${NEW_PROJECT}.dts failed"
     fi
 
     cp ${KERNEL}/arch/${ARM}/boot/dts/${BASE_PROJECT}_bat_setting.dtsi ${KERNEL}/arch/${ARM}/boot/dts/${NEW_PROJECT}_bat_setting.dtsi &> /dev/null
     if [ $? == 0 ]; then
       echo "Create  ${KERNEL}/arch/${ARM}/boot/dts/${NEW_PROJECT}_bat_setting.dtsi"
-      NEW_FILES="${NEW_FILES} ${KERNEL}/arch/${ARM}/boot/dts/${NEW_PROJECT}_bat_setting.dtsi ${KERNEL}/arch/${ARM}/boot/dts/${NEW_PROJECT}.dts"
+      NEW_FILES="${NEW_FILES} ${KERNEL}/arch/${ARM}/boot/dts/${NEW_PROJECT}_bat_setting.dtsi "
     else
-      echo "    Error: ${KERNEL}/arch/${ARM}/boot/dts/${BASE_PROJECT}_bat_setting.dtsi not exist"
+      echo "    Error: create ${KERNEL}/arch/${ARM}/boot/dts/${NEW_PROJECT}_bat_setting.dtsi failed"
     fi
 
     PLATFORM=`grep -r CONFIG_MTK_PLATFORM ${KERNEL}/arch/${ARM}/configs/${BASE_PROJECT}_defconfig | awk -F '=' '{ print $2}'`
@@ -144,52 +145,49 @@ else
 
 ############# for mt8735  (mt6735) #####################
     if [ ${PLATFORM} == '"mt6735"' ]; then
-	cp ${KERNEL}/drivers/misc/mediatek/dws/mt6735/${BASE_PROJECT}.dws ${KERNEL}/drivers/misc/mediatek/dws/mt6735/${NEW_PROJECT}.dws 2> /dev/null
+	cp ${KERNEL}/drivers/misc/mediatek/dws/mt6735/${BASE_PROJECT}.dws ${KERNEL}/drivers/misc/mediatek/dws/mt6735/${NEW_PROJECT}.dws &> /dev/null
 	if [ $? == 0 ]; then
 	  echo "Create  ${KERNEL}/drivers/misc/mediatek/dws/mt6735/${NEW_PROJECT}.dws"
 	  NEW_FILES="${NEW_FILES} ${KERNEL}/drivers/misc/mediatek/dws/mt6735/${NEW_PROJECT}.dws"
         else
-	  echo "    Error: ${KERNEL}/drivers/misc/mediatek/dws/mt6735/${NEW_PROJECT}.dws not exist"
+	  echo "    Error: create ${KERNEL}/drivers/misc/mediatek/dws/mt6735/${NEW_PROJECT}.dws failed"
         fi
-
-	if [ -e ${KERNEL}/drivers/misc/mediatek/imgsensor/src/mt6735m/camera_project/${BASE_PROJECT} ]; then
-	    cp -ra ${KERNEL}/drivers/misc/mediatek/imgsensor/src/mt6735m/camera_project/${BASE_PROJECT} ${KERNEL}/drivers/misc/mediatek/imgsensor/src/mt6735m/camera_project/${NEW_PROJECT} 2>&1
-	    if [ $? == 0 ]; then
-	      echo "Create  ${KERNEL}/drivers/misc/mediatek/imgsensor/src/mt6735m/camera_project/${NEW_PROJECT}"
-	      NEW_FILES="${NEW_FILES} ${KERNEL}/drivers/misc/mediatek/imgsensor/src/mt6735m/camera_project/${NEW_PROJECT}"
-	    fi
+	#### camera_project
+	cp -ra ${KERNEL}/drivers/misc/mediatek/imgsensor/src/mt6735m/camera_project/${BASE_PROJECT} ${KERNEL}/drivers/misc/mediatek/imgsensor/src/mt6735m/camera_project/${NEW_PROJECT} &> /dev/null
+	if [ $? == 0 ]; then
+	  echo "Create  ${KERNEL}/drivers/misc/mediatek/imgsensor/src/mt6735m/camera_project/${NEW_PROJECT}"
+	  NEW_FILES="${NEW_FILES} ${KERNEL}/drivers/misc/mediatek/imgsensor/src/mt6735m/camera_project/${NEW_PROJECT}"
 	fi
-	if [ -e ${KERNEL}/drivers/misc/mediatek/flashlight/src/mt6735/${BASE_PROJECT} ]; then
-	    cp -ra ${KERNEL}/drivers/misc/mediatek/flashlight/src/mt6735/${BASE_PROJECT} ${KERNEL}/drivers/misc/mediatek/flashlight/src/mt6735/${NEW_PROJECT} 2>&1
-	    if [ $? == 0 ]; then
-	      echo "Create  ${KERNEL}/drivers/misc/mediatek/flashlight/src/mt6735/${NEW_PROJECT}"
-	      NEW_FILES="${NEW_FILES} ${KERNEL}/drivers/misc/mediatek/flashlight/src/mt6735/${NEW_PROJECT}"
-	    fi
+
+	#### flashlight
+	cp -ra ${KERNEL}/drivers/misc/mediatek/flashlight/src/mt6735/${BASE_PROJECT} ${KERNEL}/drivers/misc/mediatek/flashlight/src/mt6735/${NEW_PROJECT} &> /dev/null
+	if [ $? == 0 ]; then
+	  echo "Create  ${KERNEL}/drivers/misc/mediatek/flashlight/src/mt6735/${NEW_PROJECT}"
+	  NEW_FILES="${NEW_FILES} ${KERNEL}/drivers/misc/mediatek/flashlight/src/mt6735/${NEW_PROJECT}"
 	fi
     fi
 ############# for mt8321 ( mt6580) #####################
     if [ ${PLATFORM} == '"mt6580"' ]; then
-	cp ${KERNEL}/drivers/misc/mediatek/dws/mt6580/${BASE_PROJECT}.dws ${KERNEL}/drivers/misc/mediatek/dws/mt6580/${NEW_PROJECT}.dws 2> /dev/null
+	cp ${KERNEL}/drivers/misc/mediatek/dws/mt6580/${BASE_PROJECT}.dws ${KERNEL}/drivers/misc/mediatek/dws/mt6580/${NEW_PROJECT}.dws &> /dev/null
 	if [ $? == 0 ]; then
 	  echo "Create  ${KERNEL}/drivers/misc/mediatek/dws/mt6580/${NEW_PROJECT}.dws"
 	  NEW_FILES="${NEW_FILES} ${KERNEL}/drivers/misc/mediatek/dws/mt6580/${NEW_PROJECT}.dws"
         else
-	  echo "    Error: ${KERNEL}/drivers/misc/mediatek/dws/mt6580/${NEW_PROJECT}.dws not exist"
+	  echo "    Error: create ${KERNEL}/drivers/misc/mediatek/dws/mt6580/${NEW_PROJECT}.dws failed"
         fi
 
-	if [ -e ${KERNEL}/drivers/misc/mediatek/imgsensor/src/mt6580/camera_project/${BASE_PROJECT} ]; then
-	    cp -ra ${KERNEL}/drivers/misc/mediatek/imgsensor/src/mt6580/camera_project/${BASE_PROJECT} ${KERNEL}/drivers/misc/mediatek/imgsensor/src/mt6580/camera_project/${NEW_PROJECT} 2>&1
-	    if [ $? == 0 ]; then
-	      echo "Create  ${KERNEL}/drivers/misc/mediatek/imgsensor/src/mt6580/camera_project/${NEW_PROJECT}"
-	      NEW_FILES="${NEW_FILES} ${KERNEL}/drivers/misc/mediatek/imgsensor/src/mt6580/camera_project/${NEW_PROJECT}"
-	    fi
+	#### camera_project
+	cp -ra ${KERNEL}/drivers/misc/mediatek/imgsensor/src/mt6580/camera_project/${BASE_PROJECT} ${KERNEL}/drivers/misc/mediatek/imgsensor/src/mt6580/camera_project/${NEW_PROJECT} &> /dev/null
+	if [ $? == 0 ]; then
+	  echo "Create  ${KERNEL}/drivers/misc/mediatek/imgsensor/src/mt6580/camera_project/${NEW_PROJECT}"
+	  NEW_FILES="${NEW_FILES} ${KERNEL}/drivers/misc/mediatek/imgsensor/src/mt6580/camera_project/${NEW_PROJECT}"
 	fi
-	if [ -e ${KERNEL}/drivers/misc/mediatek/flashlight/src/mt6580/${BASE_PROJECT} ]; then
-	    cp -ra ${KERNEL}/drivers/misc/mediatek/flashlight/src/mt6580/${BASE_PROJECT} ${KERNEL}/drivers/misc/mediatek/flashlight/src/mt6580/${NEW_PROJECT} 2>&1
-	    if [ $? == 0 ]; then
-	      echo "Create  ${KERNEL}/drivers/misc/mediatek/flashlight/src/mt6580/${NEW_PROJECT}"
-	      NEW_FILES="${NEW_FILES} ${KERNEL}/drivers/misc/mediatek/flashlight/src/mt6580/${NEW_PROJECT}"
-	    fi
+
+	#### flashlight
+	cp -ra ${KERNEL}/drivers/misc/mediatek/flashlight/src/mt6580/${BASE_PROJECT} ${KERNEL}/drivers/misc/mediatek/flashlight/src/mt6580/${NEW_PROJECT} &> /dev/null
+	if [ $? == 0 ]; then
+	  echo "Create  ${KERNEL}/drivers/misc/mediatek/flashlight/src/mt6580/${NEW_PROJECT}"
+	  NEW_FILES="${NEW_FILES} ${KERNEL}/drivers/misc/mediatek/flashlight/src/mt6580/${NEW_PROJECT}"
 	fi
     fi
 fi
