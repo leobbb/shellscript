@@ -1,9 +1,9 @@
 #!/bin/bash
 #
-# 查找修改文件中字符串的提交
+# 根据字符串查找对应的提交
 #
-# ./findcommit.sh param1  param2
-# param1: directory of file 
+# ./findcommit param1  param2
+# param1: directory or file 
 # param2: string
 #
 
@@ -17,7 +17,7 @@ DIR=$PWD
 FILE=$1
 STR=$2
 
-if [ ! -f "$FILE" ]; then
+if [ ! -e "$FILE" ]; then
     echo "[02] Error: first parameter wrong"
     echo "     Please input whole directory of file"
     exit 2
